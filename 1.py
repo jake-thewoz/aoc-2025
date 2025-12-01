@@ -36,16 +36,13 @@ for move in data:
     direction = move[0]
     moves = int(move[1:])
 
-    if direction == 'L':
-        for tick in range(moves):
-            safe -= 1
-            if safe % 100 == 0:
-                count += 1
-
-    else:
-        for tick in range(moves):
+    for tick in range(moves):
+        if direction == 'R':
             safe += 1
-            if safe % 100 == 0:
-                count += 1
+        else:
+            safe -=1
+
+        if safe % 100 == 0:
+            count += 1
                 
 print(f'The safe rolled through zero {count} times')
