@@ -11,7 +11,6 @@ data = data_getter.get_data(3).splitlines()
 total = 0
 
 for bank in data:
-    print(f'bank: {bank}')
     # find the first digit
     first = ''
     new_bank = ''
@@ -22,9 +21,6 @@ for bank in data:
             new_bank = bank[index+1:]
             break
 
-    print(f'first: {first}')
-    print(f'new_bank: {new_bank}')
-
     # now the second digit
     second = ''
     for i in range(9, 0, -1):
@@ -33,11 +29,32 @@ for bank in data:
             second = str(i)
             break
 
-    print(f'second: {second}')
-    print(f'and {int(first+second)}')
-
     total += int(first + second)
 
 print(f'The total output joltage is {total}')
 
+# Part Two
 
+# Okay, so I think we take the same approach as above and make it more programmatic
+
+total = 0
+
+for bank in data:
+    nbank = bank # strings in python are inherently immutable, so no need to copy
+
+    # this loop will be for our 12 digits
+    joltage = ''
+    for i in range(11, -1, -1):
+        # and in this loop, we'll check for the earliest highest digit
+        for j in range(9, 0, -1):
+            index = nbank.find(str(j))
+            if index != -1 and index < len(nbank)-i:
+                joltage = joltage + str(j)
+                nbank = nbank[index+1:]
+                break
+    
+    # print(f'final joltage: {joltage}')
+
+    total += int(joltage)
+
+print(f'The new total output joltage is {total}')
