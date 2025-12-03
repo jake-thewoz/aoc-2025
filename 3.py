@@ -53,8 +53,6 @@ for bank in data:
                 nbank = nbank[index+1:]
                 break
     
-    # print(f'final joltage: {joltage}')
-
     total += int(joltage)
 
 print(f'The new total output joltage is {total}')
