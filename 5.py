@@ -27,50 +27,47 @@ print(f'There were {count} fresh ingredients')
 
 # Part Two
 
-# Okay, we'll just subtract and add one
+# Let's sort the ranges by the start number, then compare the end number
 
-# Ah, it's not that simple! They overlap!
-# Let's see if our computer breaks if we try to put them all in a set
+# First I'll convert them to int tuples
+ranges = [
+    (int(r.split('-')[0]), int(r.split('-')[1]))
+     for r in ranges
+    ]
 
-# Update, it did break, lol. Process killed
-# Let's try making a more perfect list of ranges, combining the ones that overlap, then count
-# Maybe we need to do it multiple times?
+ranges.sort()
 
-kill_list = {1}
-old_ranges = ranges[:]
+# Now we can loop through the ranges, merging if our current
+# high number is within the next range
 
-while len(kill_list) > 0:
-    kill_list = set()
-    new_ranges = []
+good_ranges = []
+skip_list = set()
 
-    for i in range(len(old_ranges)):
-        if i in kill_list:
+for i in range(len(ranges)):
+    if i in skip_list:
+        continue
+
+    low = ranges[i][0]
+    high = ranges[i][1]
+
+    for j in range(i+1, len(ranges)):
+        if high < ranges[j][0]: # We've found empty space
+            break
+        elif high >= ranges[j][1]: # The next high number isn't better
+            skip_list.add(j)
+            continue
+        elif high >= ranges[j][0] and high < ranges[j][1]: # The next high number is better
+            high = ranges[j][1]
+            skip_list.add(j)
             continue
 
-        low, high = [int(x) for x in old_ranges[i].split('-')]
+    good_ranges.append((low, high))
 
-        for j in range(i+1, len(old_ranges)):
-            if j in kill_list:
-                continue
-
-            jlow, jhigh = [int(x) for x in old_ranges[j].split('-')]
-            
-            if low >= jlow and low <= jhigh:
-                low = jlow
-                kill_list.add(j)
-            if high >= jlow and high <= jhigh:
-                high = jhigh
-                kill_list.add(j)
-
-        new_ranges.append(f'{low}-{high}')
-    old_ranges = new_ranges[:]
-
-# Now we just add up the differences
+# Now I think we have everything we need to calculate the number of IDs
 
 total = 0
 
-for rang in new_ranges:
-    low, high = [int(x) for x in rang.split('-')]
-    total += high - low + 1
+for rang in good_ranges:
+    total += rang[1] - rang[0] + 1
 
-print(f'The total number of fresh IDs is {total}')
+print(f'The total number of good IDs is {total}')
