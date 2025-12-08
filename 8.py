@@ -98,3 +98,26 @@ circuit_sizes = [len(circuit) for circuit in box_circuits]
 three_biggest = sorted(circuit_sizes, reverse=True)[:3]
 
 print(f'The three biggest circuits make a product of {math.prod(three_biggest)}')
+
+# Part Two
+
+# I don't think this will be too hard- we just have to run the same code as above
+# until the returned list from find_circuits has a lenght of one
+
+# I'll just start from index 1000 since we already know it's not one big circuit yet
+pairs = []
+full_circuits = []
+
+for pair in sorted_distances:
+    pairs.append(pair[0])
+    full_circuits = find_circuits(pairs)
+
+    # Now we need to check 3 things:
+    # 1- the number of circuits is 1
+    # 2- we have more than one pair (so we're not just at the start)
+    # 3- the list of circuits includes every single box
+    if len(full_circuits) == 1 and len(pairs) > 1 \
+            and len(set(x for pair in full_circuits[0] for x in pair)) == 1000:
+        break
+
+print(f'The length of the extension cable should be {boxes[pairs[-1][0]][0] * boxes[pairs[-1][1]][0]}')
