@@ -83,10 +83,18 @@ def find_circuits(pairs):
     return list(components_map.values())
 
 circuits = find_circuits(shortest_thousand)
-print(circuits)
+
+# Now instead of pairs, we need to create a list of tuples of just the boxes
+box_circuits = []
+for c in circuits:
+    new_c = set()
+    for a, b in c:
+        new_c.add(a)
+        new_c.add(b)
+    box_circuits.append(new_c)
 
 # Now we need to find the 3 largest circuits
-circuit_sizes = [len(circuit) for circuit in circuits]
+circuit_sizes = [len(circuit) for circuit in box_circuits]
 three_biggest = sorted(circuit_sizes, reverse=True)[:3]
 
 print(f'The three biggest circuits make a product of {math.prod(three_biggest)}')
