@@ -28,3 +28,41 @@ def count_routes(graph, start_node, end_node):
     return count
 
 print(f'The number of ways to get from you to end is {count_routes(graph, "you", "out")}')
+
+# Part Two
+
+# This doesn't seem that bad-
+# All we need to do is modify our function so that we create paths instead of
+# just count.
+
+# Well this is taking a long time to run. I'm not sure why, but my guess is:
+# - there are cycles
+# - there are a ton of routes
+# I think cycles is a more likely culprit...
+
+def find_routes(graph, start_node, end_node, path=[]):
+    # Update the current path
+    current_path = path + [start_node]
+
+    if start_node == end_node:
+        return [current_path]
+
+    # Recursive section
+    all_paths = []
+
+    # iterate through all neighbors
+    for neighbor in graph[start_node]:
+        # collect their paths to end_node
+        new_paths = find_routes(graph, neighbor, end_node, current_path)
+
+        # add the new paths to all paths
+        all_paths.extend(new_paths)
+
+    return all_paths
+
+# print(f'The number of ways to get from svr to end is {count_routes(graph, "svr", "out")}')
+
+all_paths = find_routes(graph, 'svr', 'out')
+filtered_paths = [path for path in all_paths if 'dac' in path and 'fft' in path]
+
+print(f'The number of paths with dac and fft are {len(filtered_paths)}')
