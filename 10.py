@@ -1,7 +1,8 @@
 import data_getter
+import itertools
 from collections import deque
 
-data = data_getter.get_data(10).splitlines()
+data = data_getter.get_data(100).splitlines()
 
 # print(data)
 
@@ -81,3 +82,35 @@ for state, presses in machines.items():
 
 print(count)
 
+# That didn't work.
+# Let's try something simpler:
+# - we know that each button at most can only be pressed once
+# - so some combination of the buttons must equal the lights
+
+def button_combo(target_state, press_list):
+    start_state = (False,) * len(target_state)
+    target_state = tuple(char == '#' for char in target_state)
+
+    # Let's go from 1 to len(state), trying every combination of buttons
+    for r in range(1, len(target_state)+1):
+        combos = list(itertools.combinations(press_list, r))
+        
+        # Each combo is a list of the button presses
+        for combo in combos:
+
+            new_state = list(start_state)
+            for press in combo:
+                new_state = [
+                    (not value) if index in press else value
+                    for index, value in enumerate(new_state)
+                ]
+                if tuple(new_state) == target_state:
+                    return r
+    return 0
+
+# Let's try again!
+count = 0
+for state, presses in machines.items():
+    count += button_combo(state, presses)
+
+print(count)
