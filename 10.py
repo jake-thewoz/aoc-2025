@@ -2,7 +2,7 @@ import data_getter
 import itertools
 from collections import deque
 
-data = data_getter.get_data(100).splitlines()
+data = data_getter.get_data(10).splitlines()
 
 # print(data)
 
@@ -14,14 +14,17 @@ data = data_getter.get_data(100).splitlines()
 # First let's wrangle the data into a dict
 # This is so ugly, but it gets our data into a dict where the key is a tuple
 # of the light state, and the value is a list of lists of ints (the presses)
-machines = {
-    tuple(list(row.split(' ')[0])[1:-1]): 
+machines = [
+        (
+    tuple(list(row.split(' ')[0])[1:-1]), 
+
     [
         [int(s) for s in item.strip('()').split(',')]
         for item in row.split(' ')[1:-1]
     ]
+    )
     for row in data
-}
+]
 
 # print(machines)
 
@@ -77,12 +80,13 @@ def button_bfs(target_state, press_list):
 
 # Now let's run it!
 count = 0
-for state, presses in machines.items():
+for i in range(len(machines)):
+    state = machines[i][0]
+    presses = machines[i][1]
     count += button_bfs(state, presses)
 
-print(count)
+print(f'The minimum number of button presses is {count}')
 
-# That didn't work.
 # Let's try something simpler:
 # - we know that each button at most can only be pressed once
 # - so some combination of the buttons must equal the lights
@@ -110,7 +114,9 @@ def button_combo(target_state, press_list):
 
 # Let's try again!
 count = 0
-for state, presses in machines.items():
+for i in range(len(machines)):
+    state = machines[i][0]
+    presses = machines[i][1]
     count += button_combo(state, presses)
 
-print(count)
+print(f'The minimum number of button presses is {count}')
