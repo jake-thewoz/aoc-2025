@@ -120,3 +120,71 @@ for i in range(len(machines)):
     count += button_combo(state, presses)
 
 print(f'The minimum number of button presses is {count}')
+
+# Part Two --------------------------------------------
+
+# I think I can modify the BFS approach to fit this task
+
+# First, let's get a new data variable
+# No messing around with a comprehension this time :P
+machines = []
+for row in data:
+    str_state = row.split(' ')[-1]
+    state = tuple(int(x) for x in str_state.strip('{}').split(','))
+
+    str_presses = row.split(' ')[1:-1]
+    presses = []
+    for press in str_presses:
+        p = tuple(int(x) for x in press.strip('()').split(','))
+        presses.append(p)
+
+    machines.append((state, presses))
+
+# Now we'll make a new BFS function for the new kind of target state
+def state_bfs(target_state, press_list):
+    # First, we need a start state of all zeroes
+    start_state = (0,) * len(target_state)
+
+    if start_state == target_state:
+        return 0
+
+    queue = deque([(start_state, 0)])
+    visited = {start_state}
+
+    # main search loop
+    while queue:
+        # dequeue the current node and its distance
+        current_node, distance = queue.popleft()
+
+        # Let's create the next level of the graph
+        graph = []
+        for press in press_list:
+            new_node = [
+                (value+1) if index in press else value
+                for index, value in enumerate(current_node)
+            ]
+            graph.append(tuple(new_node))
+
+        # now let's explore these new nodes
+        for neighbor in graph:
+
+            # success condition
+            if neighbor == target_state:
+                return distance + 1
+
+            # continue if neighbor hasn't been visited
+            if neighbor not in visited:
+                visited.add(neighbor)
+                # add it to the queue
+                queue.append((neighbor, distance+1))
+    return -1
+
+# Let's try it!
+count = 0
+for i in range(len(machines)):
+    print(f'Machine {i} of {len(machines)}')
+    state = machines[i][0]
+    presses = machines[i][1]
+    count += state_bfs(state, presses)
+
+print(f'The minimum number of button presses is {count}')
