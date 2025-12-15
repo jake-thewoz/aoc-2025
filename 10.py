@@ -2,7 +2,7 @@ import data_getter
 import itertools
 from collections import deque
 
-data = data_getter.get_data(10).splitlines()
+data = data_getter.get_data(100).splitlines()
 
 # print(data)
 
@@ -163,7 +163,13 @@ def state_bfs(target_state, press_list):
                 (value+1) if index in press else value
                 for index, value in enumerate(current_node)
             ]
-            graph.append(tuple(new_node))
+            good_node = True
+            for i in range(len(new_node)):
+                if new_node[i] > target_state[i]:
+                    good_node = False
+                    break
+            if good_node: 
+                graph.append(tuple(new_node))
 
         # now let's explore these new nodes
         for neighbor in graph:
